@@ -44,7 +44,7 @@ def is_wall_collision(maze, pos):
         return True
     return False
 
-def is_box_wall_collsion(maze, pos, action):
+def is_box_wall_collision(maze, pos, action):
     next_pos = (pos[0] + POS_PLAYER_MOVE[action][0], pos[1] + POS_PLAYER_MOVE[action][1])
     if is_over_bound_maze(maze, next_pos):
         return True
@@ -53,6 +53,6 @@ def is_box_wall_collsion(maze, pos, action):
     return False
 
 def can_move(maze, pos, action):
-    return not (is_over_bound_maze(maze, pos) or is_more_box_collision(maze, pos, action) or is_wall_collision(maze, pos) or is_box_wall_collsion(maze, pos, action))
+    return not (is_over_bound_maze(maze, pos) or is_more_box_collision(maze, pos, action) or is_wall_collision(maze, pos) or is_box_wall_collision(maze, pos, action))
 
 

@@ -1,12 +1,13 @@
+from time import *
+import os
 from turtle import Screen
 import pygame
 import numpy as np
-from sympy import carmichael
 from BFS import *
 from utilities import *
 
-maze = load_maze("1.txt")
-goal_state = load_goal_state("1.txt")
+maze = load_maze("3.txt")
+goal_state = load_goal_state("3.txt")
 SCREEN_SIZE = (600, 600)
 WIDTH = SCREEN_SIZE[0]/len(maze[0])
 HEIGHT = SCREEN_SIZE[0]/len(maze)
@@ -40,33 +41,36 @@ def load_game ():
     goal = pygame.transform.scale(goal, (WIDTH, HEIGHT))
 
 
+
 def game_zone(problem):
     pygame.init()
     load_game()
-
+    clock = pygame.time.Clock()
     running = True
     res = BFS(problem)
-    board = res.solution()
-
+    k = res.solution()
+    print(k)
+    curr_state = 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        # screen.blit(background, (0, 0))
+        clock.tick(2)
+        board = k[curr_state]
+        for i in range (len(board)):
+            for j in range (len(board[i])):
+                if board[i][j] == "1":
+                    screen.blit (wall, (j*WIDTH, i*HEIGHT))
+                elif board[i][j] == "0":
+                    screen.blit (floor, (j*WIDTH, i*HEIGHT))
+                elif board[i][j] == "x":
+                    screen.blit (car, (j*WIDTH, i*HEIGHT))
+                elif board[i][j] == "g":
+                    screen.blit (goal, (j*WIDTH, i*HEIGHT))
+                elif board[i][j] == "*":
+                    screen.blit (box, (j*WIDTH, i*HEIGHT))
         pygame.display.update()
-        for k in board:
-            for i in range (len(k)):
-                for j in range (len(k[i])):
-                    if k[i][j] == "1":
-                        screen.blit (wall, (j*WIDTH, i*HEIGHT))
-                    elif k[i][j] == "0":
-                        screen.blit (floor, (j*WIDTH, i*HEIGHT))
-                    elif k[i][j] == "x":
-                        screen.blit (car, (j*WIDTH, i*HEIGHT))
-                    elif k[i][j] == "g":
-                        screen.blit (goal, (j*WIDTH, i*HEIGHT))
-                    elif k[i][j] == "*":
-                        screen.blit (box, (j*WIDTH, i*HEIGHT))
+        curr_state += 1
         
 
 

@@ -1,8 +1,9 @@
+from re import X
 import sys
 from collections import deque
 
 from utilities import *
-
+from main import goal_state
 class SokobanProblem:
     def __init__(self, initial, goal):
         self.initial = initial
@@ -25,9 +26,16 @@ class SokobanProblem:
         if new_state[next_player_pos[0]][next_player_pos[1]] == '*':
             next_box_pos = (next_player_pos[0] + POS_PLAYER_MOVE[action][0], next_player_pos[1] + POS_PLAYER_MOVE[action][1])
             new_state[next_player_pos[0]][next_player_pos[1]], new_state[next_box_pos[0]][next_box_pos[1]] = new_state[next_box_pos[0]][next_box_pos[1]], new_state[next_player_pos[0]][next_player_pos[1]]
+        
         new_state[next_player_pos[0]][next_player_pos[1]], new_state[player_pos[0]][player_pos[1]] = new_state[player_pos[0]][player_pos[1]], new_state[next_player_pos[0]][next_player_pos[1]]
+
         if new_state[player_pos[0]][player_pos[1]] == 'g':
             new_state[player_pos[0]][player_pos[1]] = '0'
+
+        for g in goal_state:
+            if new_state[int(g[0])][int(g[1])] == '0':
+                new_state[int(g[0])][int(g[1])] = 'g'
+
         return tuple(map(tuple,new_state))
 
     def goal_test(self, state):
