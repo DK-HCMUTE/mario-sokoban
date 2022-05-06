@@ -1,20 +1,52 @@
-# [SHARED WITH AI CLASSES] week05 exercise
-'''
-The code below is INCOMPLETE. You need to implement the following functions:
-1. depth_limited_search()  
-2. iterative_deepening_search() 
-
-HINT: Function breadth_first_graph_search() is for your reference (Its usage is demonstrated in the __main__ part (line 154)). Read it to understand the given code.
-'''
-
-
 import sys
 from collections import deque
 
-from sympy import true
 from utilities import *
 
+class SokobanProblem:
+    def __init__(self, initial, goal):
+        self.initial = initial
+        self.goal = goal
 
+    def actions(self, state):
+        possible_actions = ['UP', 'DOWN', 'LEFT', 'RIGHT']
+        player_pos = get_player_position(state)
+        player_pos = [int(player_pos[0]), int(player_pos[1])]
+        for act, pos in POS_PLAYER_MOVE.items():
+            if not can_move(state, (player_pos[0] + pos[0], player_pos[1] + pos[1]), act):
+                possible_actions.remove(act)
+        return possible_actions
+
+    def result(self, state, action):
+        player_pos = get_player_position(state)
+        player_pos = [int(player_pos[0]), int(player_pos[1])]
+        new_state = list(map(list,state))
+        next_player_pos = (player_pos[0] + POS_PLAYER_MOVE[action][0], player_pos[1] + POS_PLAYER_MOVE[action][1])
+        if new_state[next_player_pos[0]][next_player_pos[1]] == '*':
+            next_box_pos = (next_player_pos[0] + POS_PLAYER_MOVE[action][0], next_player_pos[1] + POS_PLAYER_MOVE[action][1])
+            new_state[next_player_pos[0]][next_player_pos[1]], new_state[next_box_pos[0]][next_box_pos[1]] = new_state[next_box_pos[0]][next_box_pos[1]], new_state[next_player_pos[0]][next_player_pos[1]]
+        new_state[next_player_pos[0]][next_player_pos[1]], new_state[player_pos[0]][player_pos[1]] = new_state[player_pos[0]][player_pos[1]], new_state[next_player_pos[0]][next_player_pos[1]]
+        if new_state[player_pos[0]][player_pos[1]] == 'g':
+            new_state[player_pos[0]][player_pos[1]] = '0'
+        return tuple(map(tuple,new_state))
+
+    def goal_test(self, state):
+        count = 0
+        index = 0
+        list_position = get_box_position(state)
+        for i in list_position:
+            if i[0] == self.goal[index][0] and i[1] == self.goal[index][1]:
+                count +=1
+            index += 1
+        if count == len(self.goal):
+            return True
+        return False
+
+    def path_cost(self, c, state1, action, state2):
+        return c + 1     
+
+    def find_blank_square(self, state):
+        return state.index(0)
 class Node:
     def __init__(self, state, parent=None, action=None, path_cost=0):
         self.state = state
@@ -26,8 +58,8 @@ class Node:
             self.depth = parent.depth + 1
 
     def expand(self, problem):
-        return [self.child_node(problem, action)
-                for action in problem.actions(self.state)]
+        return tuple([self.child_node(problem, action)
+                for action in problem.actions(self.state)])
 
     def child_node(self, problem, action):
         next_state = problem.result(self.state, action)
@@ -35,11 +67,9 @@ class Node:
         return next_node
 
     def solution(self):
-        """Return the sequence of actions to go from the root to this node."""
         return [node.action for node in self.path()[1:]]
 
     def path(self):
-        """Return a list of nodes forming the path from the root to this node."""
         node, path_back = self, []
         while node:
             path_back.append(node)
@@ -48,9 +78,6 @@ class Node:
 
 
 def BFS(problem):
-    """Bread first search (GRAPH SEARCH version)
-    See [Figure 3.11] for the algorithm"""
-
     node = Node(problem.initial)
     if problem.goal_test(node.state):
         return node
@@ -67,46 +94,6 @@ def BFS(problem):
     return None
       
 
-
-  
-  
-
-class SokobanProblem:
-    def __init__(self, initial, goal):
-        self.initial = initial
-        self.goal = goal
-
-    def actions(self, state):
-
-        possible_actions = ['UP', 'DOWN', 'LEFT', 'RIGHT']
-        
-        return possible_actions
-
-    def result(self, state, action):
-        blank = self.find_blank_square(state)
-        new_state = list(state)
-
-        delta = {'UP': -3, 'DOWN': 3, 'LEFT': -1, 'RIGHT': 1}
-        neighbor = blank + delta[action]
-        new_state[blank], new_state[neighbor] = new_state[neighbor], new_state[blank]
-
-        return tuple(new_state)
-
-    def goal_test(self, state):
-        count = 0
-        list_position = get_position(state)
-        for i in list_position:
-            if i in self.goal:
-                count +=1
-        if count == len(self.goal):
-            return True
-        return False
-
-    def path_cost(self, c, state1, action, state2):
-        return c + 1     
-
-    def find_blank_square(self, state):
-        return state.index(0)
 
 
     
