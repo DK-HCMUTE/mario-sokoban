@@ -3,7 +3,6 @@ import sys
 from collections import deque
 
 from utilities import *
-from main import goal_state
 class SokobanProblem:
     def __init__(self, initial, goal):
         self.initial = initial
@@ -32,7 +31,7 @@ class SokobanProblem:
         if new_state[player_pos[0]][player_pos[1]] == 'g':
             new_state[player_pos[0]][player_pos[1]] = '0'
 
-        for g in goal_state:
+        for g in self.goal:
             if new_state[int(g[0])][int(g[1])] == '0':
                 new_state[int(g[0])][int(g[1])] = 'g'
 

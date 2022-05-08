@@ -1,110 +1,62 @@
+from ctypes.wintypes import SIZE
 from time import *
 import os
 from turtle import Screen, color
 import pygame
 import numpy as np
+from sympy import false
 from BFS import *
 from utilities import *
 pygame.init()
-maze = load_maze("1.txt")
-goal_state = load_goal_state("1.txt")
+
 SCREEN_SIZE = (600, 600)
 SCREEN_MENU = (600,600)
 SCREEN_LEVEL = (600,600)
-WIDTH = SCREEN_SIZE[0]/len(maze[0])
-HEIGHT = SCREEN_SIZE[0]/len(maze)
 
-WIDTH_LEVEL = SCREEN_SIZE[0]/(2*len(maze[0]))
-HEIGHT_LEVEL = SCREEN_SIZE[0]/(2*len(maze))
-
-
+clock = pygame.time.Clock()
 
 BUTTON = (270,50)
 ARROW = (50,50)
 
 max_level = 3
-
-
-    
-
-    
+ 
 def render_level(map_level): 
     
     map_size = pygame.font.SysFont("sans",60)
     map_number = map_size.render("Lv." + str(map_level), True, white)
     map_rect = map_number.get_rect(center=(320, 120))
-    screen_level.blit(map_number, map_rect)
+    screen.blit(map_number, map_rect)
+map_level=1
+maze = load_maze(f'{map_level}.txt')
+goal_state = load_goal_state(f'{map_level}.txt')
+WIDTH=SCREEN_SIZE[0]/(2*len(maze[0]))
+HEIGHT=SCREEN_SIZE[0]/(2*len(maze))
 
-def level_zone():
 
-    map_level = 1
-    running = True
+def level_zone(map_level,maze):
+    #screen.fill((0,0,0))
+    scale_image(WIDTH,HEIGHT)
    
+    screen.blit(background_menu,(0,0))
+    screen.blit(title_content, title_rect)
 
-    while running:
-        scale_image(WIDTH_LEVEL,HEIGHT_LEVEL)
-        global maze
-        maze = load_maze(f'{map_level}.txt')
-        global goal_state 
-        goal_state = load_goal_state(f'{map_level}.txt')
-        screen_level.blit(background_menu,(0,0))
-        screen_level.blit(title_content, title_rect)
-
-        mouse_pos = pygame.mouse.get_pos()
-        arrow_left_menu = screen_level.blit(arrow_left,(0,SCREEN_LEVEL[1]/2-ARROW[0]/2))
-        arrow_right_menu= screen_level.blit(arrow_right,(SCREEN_LEVEL[0]-ARROW[0],SCREEN_LEVEL[1]/2-ARROW[0]/2))
-        render_level(map_level)
-        render_map(maze,screen_level,WIDTH_LEVEL,HEIGHT_LEVEL,SCREEN_SIZE[0]/4,SCREEN_SIZE[1]/4)
-        
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if arrow_left_menu.collidepoint(mouse_pos):
-                        map_level-=1
-                        if map_level == 0:
-                            map_level = 1
-                    if arrow_right_menu.collidepoint(mouse_pos):
-                        map_level+=1
-                        if map_level > max_level:
-                            map_level = max_level
-            if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        game_zone() 
-                        
-                    
-        pygame.display.update()
-
-
-
-
+    global arrow_left_menu 
+    arrow_left_menu = screen.blit(arrow_left,(0,SCREEN_LEVEL[1]/2-ARROW[0]/2))
+    global arrow_right_menu
+    arrow_right_menu= screen.blit(arrow_right,(SCREEN_LEVEL[0]-ARROW[0],SCREEN_LEVEL[1]/2-ARROW[0]/2))
+    render_level(map_level)
+    render_map(maze,screen, WIDTH, HEIGHT, SCREEN_SIZE[0]/4, SCREEN_SIZE[1]/4)
+    #print(SCREEN_SIZE[0]/(2*len(maze[0])), SCREEN_SIZE[0]/(2*len(maze)))
    
 def menu_zone():
-
-   
     button_pos = SCREEN_MENU[0]/2-BUTTON[0]/2
     running = True
-    while running:
 
-        screen_menu.blit(background_menu,(0,0))
-        start_button= screen_menu.blit(button_start,(button_pos,200))
-        exit_button = screen_menu.blit(quit_button,(button_pos,280))
-        
-        mouse_pos = pygame.mouse.get_pos()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if start_button.collidepoint(mouse_pos):
-                        level_zone()
-                    if exit_button.collidepoint(mouse_pos):
-                        running = False
-        pygame.display.update()
-
-
+    screen.blit(background_menu,(0,0))
+    global start_button
+    start_button = screen.blit(button_start,(button_pos,200))
+    global exit_button
+    exit_button = screen.blit(quit_button,(button_pos,280))      
     
 def render_map(maze,screen,width,height,dx=0,dy=0):
     
@@ -122,7 +74,18 @@ def render_map(maze,screen,width,height,dx=0,dy=0):
             elif maze[i][j] == "*":
                 screen.blit (box, (j*width+dx, i*height+dy))
 
+def end_zone(dy):
+    screen.blit(end_background,(0,0))
+    screen.blit(car,(SCREEN_SIZE[0]/2-car.get_width()/2,dy))
+    clock.tick(15)
 
+    if dy==SCREEN_SIZE[0]-140:
+        global return_home 
+        return_home = screen.blit(return_button,(SCREEN_SIZE[0]-return_button.get_width(),0))
+    # global start_button
+    # start_button = screen.blit(button_start,(button_pos,200))
+    # global exit_button
+    # exit_button = screen.blit(quit_button,(button_pos,280)) 
 
 def load_resource():
     global screen
@@ -139,7 +102,7 @@ def load_resource():
    
 
     global car
-    car = pygame.image.load ('./assets/car.png')
+    car = pygame.image.load ('./assets/mushroomGreen.png')
     
 
     global box
@@ -149,10 +112,6 @@ def load_resource():
     global goal
     goal = pygame.image.load ('./assets/goal.png')
     
-
-    global screen_level
-    screen_level = pygame.display.set_mode(SCREEN_LEVEL)
-    pygame.display.set_caption ('SELECT')
 
     global white
     white = (255,255,255)
@@ -173,13 +132,18 @@ def load_resource():
     arrow_right =  pygame.image.load ('./assets/arrowRight.jpg')
     arrow_right =  pygame.transform.scale(arrow_right, ARROW)
 
-    global screen_menu
-    screen_menu = pygame.display.set_mode(SCREEN_MENU)
-    pygame.display.set_caption ('SOKOBAN')
 
     global background_menu 
     background_menu =  pygame.image.load ('./assets/loadMenu.png')
     background_menu = pygame.transform.scale(background_menu, SCREEN_MENU)
+
+    global end_background
+    end_background =  pygame.image.load ('./assets/endGame.jpg')
+    end_background = pygame.transform.scale(end_background, SCREEN_MENU)
+
+    global return_button
+    return_button =  pygame.image.load ('./assets/returnHome.png')
+    return_button = pygame.transform.scale(return_button, (150,50)) 
 
     global red 
     red = (235,51,36)
@@ -208,35 +172,97 @@ def scale_image(width,height):
     global goal 
     goal = pygame.transform.scale(goal, (width, height))
 
+def game_init(k,maze,curr_state):
+    clock.tick(10)
+    board = k[curr_state]
+    render_map(board,screen,SCREEN_SIZE[0]/len(maze[0]),SCREEN_SIZE[0]/len(maze))
+
 def game_zone():
-    scale_image(WIDTH,HEIGHT)
-    clock = pygame.time.Clock()
-    running = True
-    problem = SokobanProblem(maze,goal_state)
-    res = BFS(problem)
-    k = res.solution()
-    print(k)
+    map_level=1
+    maze = load_maze(f'{map_level}.txt')
+    goal_state = load_goal_state(f'{map_level}.txt')
+
     curr_state = 0
+    GAME_STATE="Menu"
+    running = True
+
+    dy=0
+
     while running:
+        mouse_pos = pygame.mouse.get_pos()
+        if GAME_STATE=="Menu":
+            menu_zone()
+        if GAME_STATE=="Level":
+            maze = load_maze(f'{map_level}.txt')
+            goal_state = load_goal_state(f'{map_level}.txt')
+            level_zone(map_level,maze)
+        if GAME_STATE=="Solve":
+            curr_state=0
+            problem = SokobanProblem(maze,goal_state)
+            res = BFS(problem)
+            global k 
+            k = res.solution()
+            print(k)
+            GAME_STATE="Run game"
+        if GAME_STATE=="Run game":
+            scale_image(SCREEN_SIZE[0]/len(maze[0]),SCREEN_SIZE[0]/len(maze))
+            game_init(k,maze,curr_state)
+            curr_state += 1
+            if curr_state>=len(k):
+                #GAME_STATE="End game"
+                curr_state=len(k)-1
+        if GAME_STATE=="End game":
+            end_zone(dy)
+            dy+=15
+            if dy>=SCREEN_SIZE[0]-140:
+                dy=SCREEN_SIZE[0]-140  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        clock.tick(2)
-        board = k[curr_state]
-        render_map(board,screen,WIDTH,HEIGHT)
-        pygame.display.update()
-        curr_state += 1
-        # if curr_state > len(board):
-        #     clock.tick(2)
-        
+            if GAME_STATE=="Run game":
+                if event.type == pygame.KEYDOWN:
+                    if event.key==pygame.K_RETURN:
+                        GAME_STATE="End game"
+            if GAME_STATE == "End game":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if return_home.collidepoint(mouse_pos):
+                            GAME_STATE="Level"     
+                    
+            if GAME_STATE=="Level":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if arrow_left_menu.collidepoint(mouse_pos):
+                            map_level-=1
+                            if map_level == 0:
+                                map_level = 1
+                        if arrow_right_menu.collidepoint(mouse_pos):
+                            map_level+=1
+                            if map_level > max_level:
+                                map_level = max_level
+                if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            GAME_STATE="Solve"
 
+            if GAME_STATE=="Menu":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if start_button.collidepoint(mouse_pos):
+                            GAME_STATE="Level"
+                        if exit_button.collidepoint(mouse_pos):
+                            running = False
+            if event.type == pygame.QUIT:
+                running = False
+        pygame.display.update()
+   
 
 if __name__ == '__main__':
     load_resource()
     
     # print(res.solution())
-    game_zone()
+    #game_zone()
     #menu_zone()
+    game_zone()
     
 
 
