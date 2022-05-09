@@ -13,7 +13,7 @@ from tkinter import messagebox
 
 pygame.init()
 
-SCREEN_SIZE = (600, 600)
+SCREEN_SIZE = (600,600)
 SCREEN_MENU = (600,600)
 SCREEN_LEVEL = (600,600)
 TITLE_STATE = "Loading"
@@ -99,23 +99,23 @@ def load_resource():
     icon = pygame.image.load ('./assets/icon.jpg')
     pygame.display.set_icon(icon)
     
-    global floor
-    floor = pygame.image.load ('./assets/background.png')
+    global floor1
+    floor1 = pygame.image.load ('./assets/background.png')
     
-    global wall
-    wall = pygame.image.load ('./assets/wall.png')
+    global wall1
+    wall1 = pygame.image.load ('./assets/wall.png')
    
 
-    global car
-    car = pygame.image.load ('./assets/mushroomGreen.png')
+    global car1
+    car1 = pygame.image.load ('./assets/mushroomGreen.png')
     
 
-    global box
-    box = pygame.image.load ('./assets/box.png')
+    global box1
+    box1 = pygame.image.load ('./assets/box.png')
     
 
-    global goal
-    goal = pygame.image.load ('./assets/goal.png')
+    global goal1
+    goal1 = pygame.image.load ('./assets/goal.png')
     
 
     global white
@@ -172,15 +172,15 @@ def load_resource():
 def scale_image(width,height):
 
     global floor
-    floor = pygame.transform.scale(floor, (width, height))
+    floor = pygame.transform.scale(floor1, (width, height))
     global wall
-    wall = pygame.transform.scale(wall,(width, height))
+    wall = pygame.transform.scale(wall1,(width, height))
     global car
-    car = pygame.transform.scale(car, (width, height))
+    car = pygame.transform.scale(car1, (width, height))
     global box
-    box = pygame.transform.scale(box, (width, height))
+    box = pygame.transform.scale(box1, (width, height))
     global goal 
-    goal = pygame.transform.scale(goal, (width, height))
+    goal = pygame.transform.scale(goal1, (width, height))
 
 def game_init(k,maze,curr_state):
     clock.tick(10)
@@ -200,8 +200,7 @@ def game_zone():
     dy=0
 
     while running:
-        pygame.display.update()
-        screen.fill((0,0,0))
+        
         mouse_pos = pygame.mouse.get_pos()
         if GAME_STATE=="Menu":
             menu_zone()
@@ -283,7 +282,7 @@ def game_zone():
                             running = False
             if event.type == pygame.QUIT:
                 running = False
-        
+        pygame.display.flip()
    
 
 if __name__ == '__main__':
