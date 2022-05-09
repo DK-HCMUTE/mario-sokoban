@@ -1,6 +1,7 @@
 from re import X
 import sys
 from collections import deque
+import time
 
 from utilities import *
 class SokobanProblem:
@@ -85,6 +86,8 @@ class Node:
 
 
 def BFS(problem):
+    start = time.time()
+    
     node = Node(problem.initial)
     if problem.goal_test(node.state):
         return node
@@ -98,6 +101,9 @@ def BFS(problem):
                 if problem.goal_test(child.state):
                     return child
                 frontier.append(child)
+        end = time.time()
+        if end - start > 5:
+            return False
     return None
       
 
