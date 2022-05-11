@@ -2,7 +2,6 @@ from ctypes.wintypes import SIZE
 from time import *
 import os
 from turtle import Screen, color
-import black
 from matplotlib.pyplot import show
 import pygame
 import numpy as np
@@ -11,6 +10,9 @@ from BFS import *
 from utilities import *
 from tkinter import *
 from tkinter import messagebox
+import threading as th
+
+
 
 pygame.init()
 
@@ -31,6 +33,7 @@ def render_level(map_level):
     map_number = map_size.render("Lv." + str(map_level), True, white)
     map_rect = map_number.get_rect(center=(320, 120))
     screen.blit(map_number, map_rect)
+
 map_level=1
 maze = load_maze(f'{map_level}.txt')
 goal_state = load_goal_state(f'{map_level}.txt')
@@ -162,7 +165,7 @@ def load_resource():
     global red 
     red = (235,51,36)
 
-    global yellow 
+    # global yellow 
     red = (235,51,36)
 
     global button_start 
@@ -259,31 +262,32 @@ def game_zone():
 
             if GAME_STATE == "Run game":
                 if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
+                        if event.key == pygame.K_RETURN and curr_state >= len(k):
                             GAME_STATE="End game"
 
             if GAME_STATE == "End game":
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if return_home.collidepoint(mouse_pos):
-                            GAME_STATE="Level"     
+                        try:
+                            if return_home.collidepoint(mouse_pos):
+                                GAME_STATE="Level" 
+                        except:
+                            continue    
 
        
             if GAME_STATE=="Level":
                 if event.type == pygame.MOUSEBUTTONDOWN  or event.type == pygame.KEYDOWN:
-                    if event.button == 1:
-                        if arrow_left_menu.collidepoint(mouse_pos) or event.key == pygame.K_LEFT:
+                        if (arrow_left_menu.collidepoint(mouse_pos) and event.button == 1) or (event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT ):
                             map_level-=1
                             TITLE_STATE = "Level"
                             if map_level == 0:
                                 map_level = 1
-                        if arrow_right_menu.collidepoint(mouse_pos) or event.key == pygame.K_RIGHT:
+                        if (arrow_right_menu.collidepoint(mouse_pos) and event.button == 1) or (event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT):
                             map_level+=1
                             TITLE_STATE = "Level"
                             if map_level > max_level:
                                 map_level = max_level
-
-                                
+  
                 if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
                             screen.blit(title_load, title_rect)
@@ -306,7 +310,14 @@ if __name__ == '__main__':
     # print(res.solution())
     #game_zone()
     #menu_zone()
-    game_zone()
+    # game_zone()
+
+    t1 = th.Thread(target= game_zone)
+    t2 = th.Thread (target= game_zone)
+    t1.start()
+    t2.start()
+    
+    
     
 
 
