@@ -16,6 +16,9 @@ import threading as th
 
 pygame.init()
 
+SCREEN_GAME = (1300, 600)
+
+
 SCREEN_SIZE = (600,600)
 SCREEN_MENU = (600,600)
 SCREEN_LEVEL = (600,600)
@@ -96,8 +99,13 @@ def end_zone(dy):
     # exit_button = screen.blit(quit_button,(button_pos,280)) 
 
 def load_resource():
+
+   
     global screen
     screen = pygame.display.set_mode(SCREEN_SIZE)
+
+    
+
     pygame.display.set_caption ('SOKOBAN')
     icon = pygame.image.load ('./assets/icon.jpg')
     pygame.display.set_icon(icon)
@@ -195,10 +203,11 @@ def scale_image(width,height):
     global goal 
     goal = pygame.transform.scale(goal1, (width, height))
 
-def game_init(k,maze,curr_state):
+def game_init(k,maze,curr_state, dx =0 , dy = 0):
     clock.tick(15)
     board = k[curr_state]
-    render_map(board,screen,SCREEN_SIZE[0]/len(maze[0]),SCREEN_SIZE[0]/len(maze))
+    render_map(board,screen,SCREEN_SIZE[0]/len(maze[0]),SCREEN_SIZE[0]/len(maze), dx, dy)
+
 
 def game_zone():
     map_level=1
@@ -211,9 +220,9 @@ def game_zone():
 
     show_messagebox = True
     dy=0
+    global screen
 
     while running:
-        
         mouse_pos = pygame.mouse.get_pos()
         if GAME_STATE=="Menu":
             menu_zone()
@@ -226,6 +235,7 @@ def game_zone():
             TITLE_STATE = "Not found"
             level_zone(map_level, maze)
             GAME_STATE = "Level"
+
         if GAME_STATE=="Solve":
             curr_state=0
             problem = SokobanProblem(maze,goal_state)
@@ -238,24 +248,33 @@ def game_zone():
                 k = res.solution()
                 print(k)
                 GAME_STATE="Run game"
+
         if GAME_STATE=="Run game":
+            global screen_game
+            screen_game = pygame.display.set_mode(SCREEN_GAME)
             end_game = False
             scale_image(SCREEN_SIZE[0]/len(maze[0]),SCREEN_SIZE[0]/len(maze))
+
             if curr_state >= len(k):
                 clock.tick(1)
                 end_game = True 
-                    # GAME_STATE="End game"
-                    # end_zone(dy)
                 curr_state=len(k)-1
             game_init(k,maze,curr_state)
+            game_init(k,maze,curr_state, dx = 700)
+
             if end_game:
-                screen.blit(title_end,(SCREEN_LEVEL[0]/2-(title_end.get_width())/2 , SCREEN_LEVEL[1]-title_end.get_height()))
+                screen.blit(title_end,(SCREEN_GAME[0]/2-(title_end.get_width())/2 , SCREEN_GAME[1]-title_end.get_height()))
             curr_state += 1
+        
+        if screen.get_width() > SCREEN_SIZE[0] and GAME_STATE != "Run game" :
+            screen = pygame.display.set_mode(SCREEN_SIZE)
+
         if GAME_STATE=="End game":
             end_zone(dy)
             dy+=15
             if dy>=SCREEN_SIZE[0]-140:
-                dy=SCREEN_SIZE[0]-140  
+                dy=SCREEN_SIZE[0]-140 
+                
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -277,12 +296,12 @@ def game_zone():
        
             if GAME_STATE=="Level":
                 if event.type == pygame.MOUSEBUTTONDOWN  or event.type == pygame.KEYDOWN:
-                        if (arrow_left_menu.collidepoint(mouse_pos) and event.button == 1) or (event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT ):
+                        if (event.type == pygame.MOUSEBUTTONDOWN and arrow_left_menu.collidepoint(mouse_pos) and event.button == 1) or (event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT ):
                             map_level-=1
                             TITLE_STATE = "Level"
                             if map_level == 0:
                                 map_level = 1
-                        if (arrow_right_menu.collidepoint(mouse_pos) and event.button == 1) or (event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT):
+                        if (event.type == pygame.MOUSEBUTTONDOWN and arrow_right_menu.collidepoint(mouse_pos) and event.button == 1) or (event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT):
                             map_level+=1
                             TITLE_STATE = "Level"
                             if map_level > max_level:
@@ -310,15 +329,4 @@ if __name__ == '__main__':
     # print(res.solution())
     #game_zone()
     #menu_zone()
-    # game_zone()
-
-    t1 = th.Thread(target= game_zone)
-    t2 = th.Thread (target= game_zone)
-    t1.start()
-    t2.start()
-    
-    
-    
-
-
-
+    game_zone()
