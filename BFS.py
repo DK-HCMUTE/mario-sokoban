@@ -40,7 +40,8 @@ def BFS(problem):
     
     node = BFSNode(problem.initial)
     if problem.goal_test(node.state):
-        return node
+        end = time.time()
+        return node, (end-start)
     frontier = deque([node])
     explored = set()
     while frontier:
@@ -49,12 +50,13 @@ def BFS(problem):
         for child in node.expand(problem):
             if child.state not in explored and child not in frontier:
                 if problem.goal_test(child.state):
-                    return child
+                    end = time.time()
+                    return child, (end-start)
                 frontier.append(child)
         end = time.time()
-        if end - start > 5:
-            return False
-    return None
+        if end - start > 30:
+            return False,(end-start)
+    return None,(end-start)
       
 
 

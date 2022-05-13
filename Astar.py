@@ -1,5 +1,6 @@
 
 from queue import PriorityQueue
+import time
 from utilities import *
 
 # Tao mot class chua thong tin ve mot vi tri trong maze
@@ -43,6 +44,7 @@ class AstarNode:
         return self.f < node.f
 
 def astar(problem):
+    start = time.time()
     startNode = AstarNode(problem.initial, problem.goal)
     frontier = PriorityQueue()
     frontier.put(startNode)
@@ -50,7 +52,8 @@ def astar(problem):
     while frontier:
         currNode = frontier.get()
         if problem.goal_test(currNode.state):
-            return currNode
+            end = time.time()
+            return currNode, (end - start)
         explored.add(currNode.state)
         for child in currNode.expand(problem):
             node = get_value_contain_in_PrioQueue(child, frontier)
@@ -60,12 +63,8 @@ def astar(problem):
                 if child.f < node.f:
                     frontier.queue.remove(node)
                     frontier.put(child)
-    return None
-
-if __name__ == '__main__':
-    maze = load_maze(f'{2}.txt')
-    goal_state = load_goal_state(f'{2}.txt')
-    
-    problem = SokobanProblem(maze,goal_state)
-    res = astar(problem)
-    print(res.solution())
+        end = time.time()
+        if end - start > 100:
+            return False,(end-start)
+    end = time.time()
+    return None, (end - start)
