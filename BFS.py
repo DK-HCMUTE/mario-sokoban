@@ -4,58 +4,8 @@ from collections import deque
 import time
 
 from utilities import *
-class SokobanProblem:
-    def __init__(self, initial, goal):
-        self.initial = initial
-        self.goal = goal
 
-    def actions(self, state):
-        possible_actions = ['UP', 'DOWN', 'LEFT', 'RIGHT']
-        player_pos = get_player_position(state)
-        player_pos = [int(player_pos[0]), int(player_pos[1])]
-        for act, pos in POS_PLAYER_MOVE.items():
-            if not can_move(state, (player_pos[0] + pos[0], player_pos[1] + pos[1]), act):
-                possible_actions.remove(act)
-        return possible_actions
-
-    def result(self, state, action):
-        player_pos = get_player_position(state)
-        player_pos = [int(player_pos[0]), int(player_pos[1])]
-        new_state = list(map(list,state))
-        next_player_pos = (player_pos[0] + POS_PLAYER_MOVE[action][0], player_pos[1] + POS_PLAYER_MOVE[action][1])
-        if new_state[next_player_pos[0]][next_player_pos[1]] == '*':
-            next_box_pos = (next_player_pos[0] + POS_PLAYER_MOVE[action][0], next_player_pos[1] + POS_PLAYER_MOVE[action][1])
-            new_state[next_player_pos[0]][next_player_pos[1]], new_state[next_box_pos[0]][next_box_pos[1]] = new_state[next_box_pos[0]][next_box_pos[1]], new_state[next_player_pos[0]][next_player_pos[1]]
-        
-        new_state[next_player_pos[0]][next_player_pos[1]], new_state[player_pos[0]][player_pos[1]] = new_state[player_pos[0]][player_pos[1]], new_state[next_player_pos[0]][next_player_pos[1]]
-
-        if new_state[player_pos[0]][player_pos[1]] == 'g':
-            new_state[player_pos[0]][player_pos[1]] = '0'
-
-        for g in self.goal:
-            if new_state[int(g[0])][int(g[1])] == '0':
-                new_state[int(g[0])][int(g[1])] = 'g'
-
-        return tuple(map(tuple,new_state))
-
-    def goal_test(self, state):
-        count = 0
-        index = 0
-        list_position = get_box_position(state)
-        for i in list_position:
-            if i[0] == self.goal[index][0] and i[1] == self.goal[index][1]:
-                count +=1
-            index += 1
-        if count == len(self.goal):
-            return True
-        return False
-
-    def path_cost(self, c, state1, action, state2):
-        return c + 1     
-
-    def find_blank_square(self, state):
-        return state.index(0)
-class Node:
+class BFSNode:
     def __init__(self, state, parent=None, action=None, path_cost=0):
         self.state = state
         self.parent = parent
@@ -71,7 +21,7 @@ class Node:
 
     def child_node(self, problem, action):
         next_state = problem.result(self.state, action)
-        next_node = Node(next_state, self, action, problem.path_cost(self.path_cost, self.state, action, next_state))
+        next_node = BFSNode(next_state, self, action, problem.path_cost(self.path_cost, self.state, action, next_state))
         return next_node
 
     def solution(self):
@@ -88,7 +38,7 @@ class Node:
 def BFS(problem):
     start = time.time()
     
-    node = Node(problem.initial)
+    node = BFSNode(problem.initial)
     if problem.goal_test(node.state):
         return node
     frontier = deque([node])

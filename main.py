@@ -8,9 +8,7 @@ import numpy as np
 from sympy import false
 from BFS import *
 from utilities import *
-from tkinter import *
-from tkinter import messagebox
-import threading as th
+from Astar import *
 
 
 
@@ -241,6 +239,7 @@ def game_zone():
             problem = SokobanProblem(maze,goal_state)
             dy = 0
             res = BFS(problem)
+            
             if res == False:
                 GAME_STATE = "Not found"
             else:
