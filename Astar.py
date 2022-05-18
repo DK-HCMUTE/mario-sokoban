@@ -1,6 +1,6 @@
-
 from queue import PriorityQueue
 import time
+
 from utilities import *
 
 # Tao mot class chua thong tin ve mot vi tri trong maze
@@ -58,8 +58,10 @@ def astar(problem):
         for child in currNode.expand(problem):
             node = get_value_contain_in_PrioQueue(child, frontier)
             if child.state not in explored and node == False:
+                child.cal_f()
                 frontier.put(child)
             elif node != False:
+                child.cal_f()
                 if child.f < node.f:
                     frontier.queue.remove(node)
                     frontier.put(child)

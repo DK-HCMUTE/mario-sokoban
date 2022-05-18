@@ -23,8 +23,6 @@ def get_box_position(state):
 def get_goal_nearest_box_dis(maze, box_pos, goal_poses):
     min = 99999.0
     for (i, j) in goal_poses:
-        if maze[int(i)][int(j)] == "*":
-            continue
         dis = math.sqrt((int(box_pos[1]) - int(j))**2 + (int(box_pos[0]) - int(i)) ** 2)
         if dis < min:
             min = dis

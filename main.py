@@ -290,8 +290,6 @@ def game_zone():
     GAME_STATE="Menu"
     MODE_STATE="Bfs"
     running = True
-
-    show_messagebox = True
     dy=0
     global screen
     run_time = 0
