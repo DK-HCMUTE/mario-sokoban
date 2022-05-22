@@ -15,7 +15,7 @@ class AstarNode:
     def cal_heuristic(self):
         box_poses = get_box_position(self.state)
         for p in box_poses:
-            self.h += get_goal_nearest_box_dis(self.state, p, self.goal)
+            self.h += get_goal_nearest_box_dis(p, self.goal)
     def expand(self, problem):
         return tuple([self.child_node(problem, action)
                 for action in problem.actions(self.state)])

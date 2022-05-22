@@ -20,7 +20,7 @@ def get_box_position(state):
             if state[i][j] == '*':
                 list_position.append([str(i),str(j)])
     return list_position
-def get_goal_nearest_box_dis(maze, box_pos, goal_poses):
+def get_goal_nearest_box_dis(box_pos, goal_poses):
     min = 99999.0
     for (i, j) in goal_poses:
         dis = math.sqrt((int(box_pos[1]) - int(j))**2 + (int(box_pos[0]) - int(i)) ** 2)

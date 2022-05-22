@@ -11,12 +11,7 @@ from BFS import *
 from utilities import *
 from Astar import *
 
-
-
 pygame.init()
-
-
-
 
 SCREEN_SIZE = (600,600)
 SCREEN_MENU = (600,600)
@@ -30,9 +25,6 @@ ARROW = (50,50)
 max_level = 8
  
 def render_level(map_level): 
-    
-    
-
     map_size = pygame.font.Font("./fonts/minecraft_font.ttf",40)
     screen.blit(title_level,(SCREEN_SIZE[0]/2-title_level.get_width()/2-30,100))
     
@@ -58,7 +50,6 @@ def level_zone(map_level,maze,mode):
 
     render_level(map_level)
     render_map(maze,screen, SCREEN_SIZE[0]/(2*len(maze[0])), SCREEN_SIZE[0]/(2*len(maze)), SCREEN_SIZE[0]/4, SCREEN_SIZE[1]/4)
-    #print(SCREEN_SIZE[0]/(2*len(maze[0])), SCREEN_SIZE[0]/(2*len(maze)))
     if TITLE_STATE == "Not found":
         screen.blit(title_notFound, (20,20))
 
@@ -70,8 +61,6 @@ def level_zone(map_level,maze,mode):
    
     global returnHome_button
     returnHome_button = screen.blit(return_button,(SCREEN_SIZE[0]-return_button.get_width(),0))
-
-   
 
 def menu_zone():
     button_pos = SCREEN_MENU[0]/2-BUTTON[0]/2
@@ -89,12 +78,7 @@ def menu_zone():
     global exit_button
     exit_button = screen.blit(quit_button,(button_quit_pos,360))      
     
-
- 
-
-    
 def render_map(maze,screen,width,height,dx=0,dy=0):
-    
      for i in range (len(maze)):
         for j in range (len(maze[i])):
             screen.blit (floor, (j*width+dx, i*height+dy))
@@ -139,12 +123,8 @@ def mode_zone():
     Astar_mode = screen.blit(title_mode_Astar,(button_pos,290)) 
     
 def load_resource():
-
-   
     global screen
     screen = pygame.display.set_mode(SCREEN_SIZE)
-
-    
 
     pygame.display.set_caption ('SOKOBAN')
     icon = pygame.image.load ('./assets/icon.jpg')
@@ -156,19 +136,15 @@ def load_resource():
     global wall1
     wall1 = pygame.image.load ('./assets/wall.png')
    
-
     global car1
     car1 = pygame.image.load ('./assets/mushroomGreen.png')
     
-
     global box1
     box1 = pygame.image.load ('./assets/box.png')
     
-
     global goal1
     goal1 = pygame.image.load ('./assets/goal.png')
     
-
     global white
     white = (255,255,255)
 
@@ -242,9 +218,6 @@ def load_resource():
     return_button = pygame.transform.scale(return_button, (150,50)) 
 
     global red 
-    red = (235,51,36)
-
-    # global yellow 
     red = (235,51,36)
 
     global button_start 
@@ -326,8 +299,6 @@ def game_zone():
                 GAME_STATE="Run game"
 
         if GAME_STATE=="Run game":
-            # global screen_game
-            # screen_game = pygame.display.set_mode(SCREEN_GAME)
             end_game = False
             scale_image(SCREEN_SIZE[0]/len(maze[0]),SCREEN_SIZE[0]/len(maze))
 
@@ -356,7 +327,6 @@ def game_zone():
             if event.type == pygame.QUIT:
                 running = False
 
-            
             if GAME_STATE == "Run game":
                 if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN and curr_state >= len(k):
@@ -370,8 +340,6 @@ def game_zone():
                                 GAME_STATE="Level" 
                         except:
                             continue    
-
-       
             if GAME_STATE=="Level":
                 if event.type == pygame.MOUSEBUTTONDOWN  or event.type == pygame.KEYDOWN:
                         if (event.type == pygame.MOUSEBUTTONDOWN and arrow_left_menu.collidepoint(mouse_pos) and event.button == 1) or (event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT ):
@@ -417,7 +385,4 @@ def game_zone():
 
 if __name__ == '__main__':
     load_resource()
-    # print(res.solution())
-    #game_zone()
-    #menu_zone()
     game_zone()

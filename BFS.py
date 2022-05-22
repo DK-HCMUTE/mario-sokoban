@@ -25,12 +25,9 @@ class BFSNode:
         return next_node
 
     def solution(self):
-        return [node.state for node in self.path()[1:]]
-
-    def path(self):
         node, path_back = self, []
         while node:
-            path_back.append(node)
+            path_back.append(node.state)
             node = node.parent
         return list(reversed(path_back))
 
@@ -56,6 +53,7 @@ def BFS(problem):
         end = time.time()
         if end - start > 30:
             return False,(end-start)
+    end = time.time()
     return None,(end-start)
       
 
