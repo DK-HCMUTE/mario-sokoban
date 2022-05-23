@@ -11,6 +11,9 @@ from BFS import *
 from utilities import *
 from Astar import *
 
+# Project AI Nhóm 2
+# Thay đổi clock tick ở dòng 101, clock tick càng cao, nhân vật di chuyển càng nhanh
+
 pygame.init()
 
 SCREEN_SIZE = (600,600)
@@ -22,14 +25,14 @@ clock = pygame.time.Clock()
 BUTTON = (270,50)
 ARROW = (50,50)
 
-max_level = 8
+max_level = 20
  
 def render_level(map_level): 
     map_size = pygame.font.Font("./fonts/minecraft_font.ttf",40)
     screen.blit(title_level,(SCREEN_SIZE[0]/2-title_level.get_width()/2-30,100))
     
     map_number = map_size.render(str(map_level), True, white)
-    map_rect = map_number.get_rect(center=(320, 120))
+    map_rect = map_number.get_rect(center=(340, 120))
     screen.blit(map_number, map_rect)
 
 map_level=1
@@ -96,7 +99,7 @@ def render_map(maze,screen,width,height,dx=0,dy=0):
 def end_zone(dy,run_time):
     screen.blit(end_background,(0,0))
     screen.blit(car,(SCREEN_SIZE[0]/2-car.get_width()/2,dy))
-    clock.tick(15)
+    clock.tick(7)
 
     if dy==SCREEN_SIZE[0]-140:
         global return_home 
