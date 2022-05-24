@@ -12,7 +12,7 @@ from utilities import *
 from Astar import *
 
 # Project AI Nhóm 2
-# Thay đổi clock tick ở dòng 101, clock tick càng cao, nhân vật di chuyển càng nhanh
+# Thay đổi clock tick ở dòng 103, clock tick càng cao, nhân vật di chuyển càng nhanh
 
 pygame.init()
 
@@ -25,7 +25,7 @@ clock = pygame.time.Clock()
 BUTTON = (270,50)
 ARROW = (50,50)
 
-max_level = 20
+max_level = 15
  
 def render_level(map_level): 
     map_size = pygame.font.Font("./fonts/minecraft_font.ttf",40)
@@ -99,7 +99,8 @@ def render_map(maze,screen,width,height,dx=0,dy=0):
 def end_zone(dy,run_time):
     screen.blit(end_background,(0,0))
     screen.blit(car,(SCREEN_SIZE[0]/2-car.get_width()/2,dy))
-    clock.tick(7)
+    #Thay đổi tốc độ hoạt ảnh ở đây!
+    clock.tick(7) 
 
     if dy==SCREEN_SIZE[0]-140:
         global return_home 

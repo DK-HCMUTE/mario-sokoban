@@ -65,7 +65,7 @@ def astar(problem):
                     frontier.queue.remove(node)
                     frontier.put(child)
         end = time.time()
-        if end - start > 100:
+        if end - start > 30:
             return False,(end-start)
     end = time.time()
     return None, (end - start)
